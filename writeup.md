@@ -6,6 +6,8 @@
 [//]: # (Image References)
 
 [fcn]: ./fcn.png
+[my_model]: ./my_model.png
+[encoder_decoder]: ./encoder_decoder.png
 [learning_curve]: ./learning_curve_epoch40.png
 [final_score]: ./final_score.png
 
@@ -27,6 +29,8 @@ You're reading it!
 Before training process I gathered more than 7,000 images using QuadSim.
 
 I was inspired by the diagram of the FCN Lecture. I stacked 3 layered encoder and decoder. Higher layers have bigger size of filters than lower layers. Filter size of each encoder layer is twice of the the previous one. Vice versa in decoder layers. After several experiments I found that more than 3 layers can make the fcn model overfitted.
+
+![alt text][my_model]
 
 ```
 def fcn_model(inputs, num_classes):
@@ -58,6 +62,7 @@ def fcn_model(inputs, num_classes):
 #### 3. The write-up conveys the student's understanding of the parameters chosen for the the neural network.
 
 I set parameters as follows.
+
 ```
 learning_rate = 0.01
 batch_size = 32
@@ -73,25 +78,39 @@ This setup is enough for the small simulated test.
 
 
 #### 4. The student has a clear understanding and is able to identify the use of various techniques and concepts in network layers indicated by the write-up.
+* The student demonstrates a clear understanding of 1 by 1 convolutions and where/when/how it should be used.
+  * I used separable convolution layer and  batch normalization for encoder blocks. By using separable convolution the number of my model's parameter is reduced. By using 1x1 convolution in the Separable Convolution, we can implement fully connection between layers on small sliding windows (receptive field). These are used for the Semantic Segmentation or Object Detection.
 
-I used separable convolution layer and  batch normalization for encoder blocks. By using separable convolution the number of my model's parameter is reduced.
-Bilinear Upsampling and Skip architecture and concatenating technique are used for the decoder blocks. By Bilinear Upsampling, encoded information for the segmentation are expanded to the pixelwise final result.
+* The student demonstrates a clear understanding of a fully connected layer and where/when/how it should be used.
+  * Fullly connected layers are used as the last layer of Recognition and Classification task that do not need spacial information. It merge all information to nodes of the next layer from the prior layer.
+
+Additionally Bilinear Upsampling and Skip architecture and concatenating technique are used for the decoder blocks. By Bilinear Upsampling, encoded information for the segmentation are expanded to the pixelwise final result.
 
 #### 5. The student has a clear understanding of image manipulation in the context of the project indicated by the write-up.
 
-After passing data images through the encoder blocks, responses of neurons of each layre are merged into smaller regions(w,h). These values are expanded to the same dimension as input images, after passing decoder blocks.
-Since there are only convolutional network without any fully connected network, all layers preserve spacial meanings.
-Because of these two key characteristics fcn models make the final result as segmentation labels by inducing appropriate loss setup.
+* The student is able to identify the use of various reasons for encoding / decoding images, when it should be used, why it is useful, and any problems that may arise.
+
+![alt text][encoder_decoder]
+
+* After passing data images through the encoder blocks, responses of neurons of each layre are merged into smaller regions.
+  * Passed tensors widthxheight dimension are shrunk. But size of channels are increased. Spacial information are compressed.
+* In the decoder blocks these values are expanded to the same dimension as input images, after passing decoder blocks.
+  * Encoded Spacial informations are reconstructed. The size of channels are shrunk.
+  * To compansate detailed shape information in decoder  blocks skip architecture are used.
+* Since there are only convolutional network without any fully connected network in encoder and decoder blocks, all layers preserve spacial meanings.
+* Because of these key characteristics fcn models make the final result as segmentation labels by inducing appropriate loss setup.
 
 #### 6. The student displays a solid understanding of the limitations to the neural network with the given data chosen for various follow-me scenarios which are conveyed in the write-up.
 
-Traditionally walking persons are relatively simple objects to classify. In this simulated situation, all other background objects are plain and simple so simple fcn can segment the target 'hero' very clearly. But If the target changes to the animal with 4 legs, the classification becomes harder. Shapes of 4-legs-animals are more diverse comparing to the shape of walking person. It means that we need more data and complicated FCN (deeper FCN Model).
+Traditionally walking persons are relatively simple objects to classify. In this simulated situation, all other background objects are plain and simple so simple fcn can segment the target 'hero' very clearly. But If the target changes to the animal with 4 legs, the classification becomes Harder. Shapes of 4-legs-animals are more diverse comparing to the shape of walking person. It means that we need more data and complicated FCN (deeper FCN Model).
+
+The Original FCN Paper and other related papares deals with various labels including animals, cars, plants and sofa. If we use a model with appropriate complexity, we can segment all types of objects.
 
 ### Model
 
 #### 1. The model is submitted in the correct format.
 
-Final Result weights are here:  
+Final Result weights are here:
 * [config_model_weights](./data/weights/config_model_weights)
 * [model_weights](./data/weights/model_weights)
 
