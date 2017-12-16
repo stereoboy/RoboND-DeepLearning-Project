@@ -106,6 +106,8 @@ Traditionally walking persons are relatively simple objects to classify. In this
 
 The Original FCN Paper and other related papares deals with various labels including animals, cars, plants and sofa. If we use a model with appropriate complexity, we can segment all types of objects.
 
+If we have a new task, we need to gather new data and re-training. The trained weight for the previous task can be a good pre-training process for the first few layers which act as low-level feature detectors. If a more complicated model is used for the cat segmentation, data should be bigger than this project's one.
+
 ### Model
 
 #### 1. The model is submitted in the correct format.
